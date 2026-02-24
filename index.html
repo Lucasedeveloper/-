@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>♥️ℹ️🆖🟥</title>
 
-<!-- Fonte cursiva romântica -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+/* (CSS permanece exatamente igual ao seu) */
 body{
   margin:0;
   height:100vh;
@@ -20,18 +20,9 @@ body{
   font-family:'Segoe UI',sans-serif;
 }
 
-canvas{
-  position:fixed;
-  inset:0;
-  z-index:0;
-}
+canvas{ position:fixed; inset:0; z-index:0; }
 
-.container{
-  position:relative;
-  width:480px;
-  height:580px;
-  z-index:1;
-}
+.container{ position:relative; width:480px; height:580px; z-index:1; }
 
 .heart{
   width:100%;
@@ -57,11 +48,7 @@ canvas{
   gap:24px;
 }
 
-.text{
-  color:#fff;
-  font-size:15px;
-  line-height:1.75;
-}
+.text{ color:#fff; font-size:15px; line-height:1.75; }
 
 .highlight{
   font-weight:900;
@@ -86,16 +73,13 @@ canvas{
   transition:opacity .6s ease, transform .6s ease;
 }
 
-.glow{
-  animation:glow 1.4s infinite alternate;
-}
+.glow{ animation:glow 1.4s infinite alternate; }
 
 @keyframes glow{
   from{filter:brightness(1);}
   to{filter:brightness(2.4);}
 }
 
-/* Assinatura cursiva */
 .signature {
   margin-top: 25px;
   color: #00ffff;
@@ -109,9 +93,7 @@ canvas{
   transition: opacity 0.8s ease;
 }
 
-.signature.show {
-  opacity: 1;
-}
+.signature.show { opacity: 1; }
 
 .signature span {
   display: inline-block;
@@ -130,7 +112,7 @@ canvas{
 <canvas id="particles"></canvas>
 
 <div class="container">
-
+<!-- SVG e HTML permanecem iguais -->
 <svg class="heart" viewBox="0 0 512 512">
   <defs>
     <radialGradient id="g" cx="50%" cy="40%" r="70%">
@@ -147,7 +129,6 @@ canvas{
   <div class="final" id="final"></div>
   <div class="signature" id="signature"></div>
 </div>
-
 </div>
 
 <script>
@@ -176,7 +157,7 @@ function type() {
       const span = document.createElement("span");
       span.textContent = msg[line][char];
 
-      if (char === 0 && line < 6) {  // só as 6 primeiras linhas
+      if (char === 0 && line < 6) {
         const colors = ["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
         span.style.color = colors[line];
         span.className = "highlight";
@@ -196,9 +177,12 @@ function type() {
     setTimeout(animateINGRED, 1400);
   }
 }
-type();
 
-/* ---------------- ANIMAÇÃO INGRED (corrigida) ---------------- */
+/* 🔹 AQUI está o atraso de 1,5 segundos */
+setTimeout(type, 1500);
+
+/* Restante do JS permanece exatamente igual */
+
 function animateINGRED() {
   const word = "INGRED";
   const targets = [];
@@ -244,20 +228,16 @@ function animateINGRED() {
       }, 2350);
     });
 
-    setTimeout(showSignature, 3200); // assinatura só depois do brilho
+    setTimeout(showSignature, 3200);
   }, 300);
 }
 
-/* ---------------- ASSINATURA CURSIVA ---------------- */
 function showSignature() {
   signatureBox.classList.add("show");
   signatureBox.innerHTML = "";
 
   const text = "Lucas ";
   let index = 0;
-
-  /* mantém cor da assinatura definida no CSS */
-  signatureBox.style.color = getComputedStyle(signatureBox).color;
 
   function typeLetter() {
     if (index < text.length) {
@@ -267,8 +247,6 @@ function showSignature() {
       index++;
       setTimeout(typeLetter, 160);
     } else {
-
-      /* coração vermelho */
       const heart = document.createElement("span");
       heart.textContent = "❤";
       heart.style.color = "#ff0000";
@@ -280,7 +258,7 @@ function showSignature() {
   typeLetter();
 }
 
-/* ---------------- PARTÍCULAS (corrigidas) ---------------- */
+/* partículas permanecem iguais */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let w, h, parts = [];
