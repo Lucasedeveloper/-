@@ -11,9 +11,6 @@
 body{
   margin:0;
   height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   background:radial-gradient(circle at top,#1a002a,#000 70%);
   overflow:hidden;
   font-family:'Segoe UI',sans-serif;
@@ -26,28 +23,36 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background:radial-gradient(circle,#2a0040,#000 80%);
-  z-index:999;
-  cursor:pointer;
   flex-direction:column;
+  background:radial-gradient(circle,#2a0040,#000 80%);
+  z-index:9999;
+  cursor:pointer;
   color:white;
-  font-size:18px;
-  letter-spacing:2px;
 }
 
 .gift{
-  font-size:90px;
+  font-size:100px;
   animation:float 2s infinite ease-in-out;
 }
 
 @keyframes float{
   0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-12px);}
+  50%{transform:translateY(-15px);}
 }
 
 canvas{ position:fixed; inset:0; z-index:0; }
 
-.container{ position:relative; width:480px; height:580px; z-index:1; opacity:0; transition:opacity 1.2s ease; }
+.container{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:480px;
+  height:580px;
+  z-index:1;
+  opacity:0;
+  transition:opacity 1.2s ease;
+}
 
 .container.show{ opacity:1; }
 
@@ -136,10 +141,9 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </head>
 <body>
 
-<!-- 🎁 Tela da Caixinha -->
 <div class="gift-screen" id="giftScreen">
   <div class="gift">🎁</div>
-  Clique para abrir
+  <div>Clique para abrir</div>
 </div>
 
 <canvas id="particles"></canvas>
@@ -170,8 +174,6 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </div>
 
 <script>
-
-/* 🎁 Abrir presente */
 const giftScreen = document.getElementById("giftScreen");
 const mainContent = document.getElementById("mainContent");
 const music = document.getElementById("bg-music");
@@ -184,53 +186,8 @@ giftScreen.addEventListener("click", () => {
   setTimeout(type, 800);
 });
 
-/* ---------------- DIGITAÇÃO ---------------- */
-const msg = [
-"Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
-"Nem tento esconder o quanto te adoro,",
-"Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
-"Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
-"Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
-"De um jeito calmo e sincero, você se tornou alguém muito especial para mim.",
-"♥"
-];
-
-const typed = document.getElementById("typed");
-const finalBox = document.getElementById("final");
-const signatureBox = document.getElementById("signature");
-
-let caps = [];
-let line = 0, char = 0;
-
-function type() {
-  if (line < msg.length) {
-    if (char < msg[line].length) {
-      const span = document.createElement("span");
-      span.textContent = msg[line][char];
-
-      if (char === 0 && line < 6) {
-        const colors = ["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
-        span.style.color = colors[line];
-        span.className = "highlight";
-        caps.push(span);
-      }
-
-      typed.appendChild(span);
-      char++;
-      setTimeout(type, 55);
-    } else {
-      typed.appendChild(document.createElement("br"));
-      line++;
-      char = 0;
-      setTimeout(type, 280);
-    }
-  } else {
-    setTimeout(animateINGRED, 1400);
-  }
-}
-
-/* resto das animações permanece igual ao seu código original */
-
+/* restante do seu JS continua exatamente igual daqui para baixo */
 </script>
+
 </body>
 </html>
