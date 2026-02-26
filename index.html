@@ -170,7 +170,26 @@ canvas{ position:fixed; inset:0; z-index:0; }
 
 /* 🎁 ABRIR PRESENTE + MÚSICA */
 const giftScreen=document.getElementById("giftScreen");
-const music=document.getElementById("bg-music");
+const giftScreen = document.getElementById("giftScreen");
+const music = document.getElementById("bg-music");
+
+/* 🎵 LISTA DE MÚSICAS */
+const playlist = [
+  "lucas1.mp3",
+  "lucas2.mp3",
+  "lucas3.mp3"
+];
+
+/* 🎲 ESCOLHE UMA ALEATÓRIA */
+const randomMusic = playlist[Math.floor(Math.random() * playlist.length)];
+music.src = randomMusic;
+
+giftScreen.addEventListener("click", () => {
+  giftScreen.style.display = "none";
+  music.volume = 0.6;
+  music.play();
+  setTimeout(type, 1500);
+});
 
 giftScreen.addEventListener("click",()=>{
   giftScreen.style.display="none";
