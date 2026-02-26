@@ -185,16 +185,43 @@ Clique para abrir
 
 <script>
 
-const playlist=["die_with_a_smile.mp3","meu_abrigo.mp3"];
+// ===== PLAYLIST SEM REPETIÇÃO =====
+const playlist=[
+"die_with_a_smile.mp3",
+"meu_abrigo.mp3",
+"musica3.mp3",
+"musica4.mp3"
+];
+
 const music=document.getElementById("bg-music");
-const randomMusic=playlist[Math.floor(Math.random()*playlist.length)];
-music.src=randomMusic;
+
+function shuffle(array){
+for(let i=array.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[array[i],array[j]]=[array[j],array[i]];
+}
+return array;
+}
+
+let savedOrder=JSON.parse(localStorage.getItem("musicOrder"));
+let currentIndex=parseInt(localStorage.getItem("musicIndex"));
+
+if(!savedOrder||!currentIndex||currentIndex>=savedOrder.length){
+savedOrder=shuffle([...playlist]);
+currentIndex=0;
+}
+
+const selectedMusic=savedOrder[currentIndex];
+music.src=selectedMusic;
+
+localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
+localStorage.setItem("musicIndex",currentIndex+1);
 
 const musicPopup=document.getElementById("musicPopup");
 
 function showMusicPopup(){
-const name=randomMusic.replace(".mp3","").replace(/_/g," ");
-musicPopup.textContent="🎵 Agora tocando: "+name;
+const name=selectedMusic.replace(".mp3","").replace(/_/g," ");
+musicPopup.textContent="🎵 Hoje está tocando: "+name;
 setTimeout(()=>musicPopup.classList.add("show"),400);
 setTimeout(()=>musicPopup.classList.remove("show"),4000);
 }
@@ -311,7 +338,7 @@ signatureBox.appendChild(heart);
 typeLetter();
 }
 
-/* PARTÍCULAS */
+// PARTÍCULAS
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
