@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* ====== SEU CSS ORIGINAL (INALTERADO) ====== */
 body{
   margin:0;
   height:100vh;
@@ -185,7 +184,7 @@ Clique para abrir
 
 <script>
 
-/* ===== PLAYLIST COMPLETA COM AUTO NEXT ===== */
+/* ===== PLAYLIST 100% FUNCIONAL ===== */
 
 const playlist=[
 "Die_with_a_smile.mp3",
@@ -206,8 +205,15 @@ return array;
 let savedOrder=JSON.parse(localStorage.getItem("musicOrder"));
 let currentIndex=parseInt(localStorage.getItem("musicIndex"));
 
-if(!savedOrder||isNaN(currentIndex)||currentIndex>=savedOrder.length){
+if(!savedOrder){
 savedOrder=shuffle([...playlist]);
+localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
+currentIndex=0;
+}
+
+if(isNaN(currentIndex) || currentIndex>=savedOrder.length){
+savedOrder=shuffle([...playlist]);
+localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
 currentIndex=0;
 }
 
@@ -215,8 +221,7 @@ function playMusic(index){
 music.src=savedOrder[index];
 music.play();
 showMusicPopup(savedOrder[index]);
-localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
-localStorage.setItem("musicIndex",index);
+localStorage.setItem("musicIndex",index+1);
 }
 
 function showMusicPopup(track){
@@ -227,14 +232,14 @@ setTimeout(()=>musicPopup.classList.add("show"),100);
 setTimeout(()=>musicPopup.classList.remove("show"),4000);
 }
 
-/* AUTO NEXT */
 music.addEventListener("ended",()=>{
-currentIndex++;
-if(currentIndex>=savedOrder.length){
+let nextIndex=parseInt(localStorage.getItem("musicIndex"));
+if(isNaN(nextIndex) || nextIndex>=savedOrder.length){
 savedOrder=shuffle([...playlist]);
-currentIndex=0;
+localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
+nextIndex=0;
 }
-playMusic(currentIndex);
+playMusic(nextIndex);
 });
 
 const giftScreen=document.getElementById("giftScreen");
@@ -246,7 +251,7 @@ playMusic(currentIndex);
 setTimeout(type,1500);
 });
 
-/* ===== RESTO DO SEU JS ORIGINAL (INALTERADO) ===== */
+/* ===== RESTO DO SEU JS ORIGINAL ===== */
 
 const msg=[
 "Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
@@ -350,7 +355,6 @@ signatureBox.appendChild(heart);
 typeLetter();
 }
 
-/* PARTÍCULAS */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
