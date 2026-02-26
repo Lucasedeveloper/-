@@ -19,7 +19,6 @@ body{
   font-family:'Segoe UI',sans-serif;
 }
 
-/* 🎁 TELA PRESENTE */
 .gift-screen{
   position:fixed;
   inset:0;
@@ -133,17 +132,14 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </head>
 <body>
 
-<!-- 🎁 TELA -->
 <div class="gift-screen" id="giftScreen">
   <div class="gift">🎁</div>
-  Clique para abrira
+  Clique para abrir
 </div>
 
 <canvas id="particles"></canvas>
 
-<audio id="bg-music" loop>
-  <source src="lucas.mp3" type="audio/mpeg">
-</audio>
+<audio id="bg-music" loop></audio>
 
 <div class="container">
 
@@ -163,38 +159,28 @@ canvas{ position:fixed; inset:0; z-index:0; }
   <div class="final" id="final"></div>
   <div class="signature" id="signature"></div>
 </div>
-
 </div>
 
 <script>
 
-/* 🎁 ABRIR PRESENTE + MÚSICA */
-const giftScreen=document.getElementById("giftScreen");
-const giftScreen = document.getElementById("giftScreen");
-const music = document.getElementById("bg-music");
-
-/* 🎵 LISTA DE MÚSICAS */
+/* 🎵 PLAYLIST ALEATÓRIA */
 const playlist = [
   "lucas.mp3",
   "bg-music.mp3"
 ];
 
-/* 🎲 ESCOLHE UMA ALEATÓRIA */
+const music = document.getElementById("bg-music");
 const randomMusic = playlist[Math.floor(Math.random() * playlist.length)];
 music.src = randomMusic;
 
-giftScreen.addEventListener("click", () => {
-  giftScreen.style.display = "none";
-  music.volume = 0.6;
-  music.play();
-  setTimeout(type, 1500);
-});
+/* 🎁 ABRIR PRESENTE */
+const giftScreen=document.getElementById("giftScreen");
 
 giftScreen.addEventListener("click",()=>{
   giftScreen.style.display="none";
   music.volume=0.6;
   music.play();
-  setTimeout(type,1500); // mantém atraso original
+  setTimeout(type,1500);
 });
 
 /* ---------------- DIGITAÇÃO ORIGINAL ---------------- */
@@ -242,7 +228,8 @@ function type(){
   }
 }
 
-/* animação INGRED permanece 100% igual */
+/* restante da animação permanece exatamente igual */
+
 function animateINGRED(){
   const word="INGRED";
   const targets=[];
@@ -295,7 +282,6 @@ function animateINGRED(){
 function showSignature(){
   signatureBox.classList.add("show");
   signatureBox.innerHTML="";
-
   const text="Lucas ";
   let index=0;
 
@@ -317,7 +303,8 @@ function showSignature(){
   typeLetter();
 }
 
-/* partículas originais */
+/* partículas */
+
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
