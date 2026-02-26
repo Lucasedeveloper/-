@@ -19,9 +19,37 @@ body{
   font-family:'Segoe UI',sans-serif;
 }
 
+/* 🎁 Tela inicial */
+.gift-screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle,#2a0040,#000 80%);
+  z-index:999;
+  cursor:pointer;
+  flex-direction:column;
+  color:white;
+  font-size:18px;
+  letter-spacing:2px;
+}
+
+.gift{
+  font-size:90px;
+  animation:float 2s infinite ease-in-out;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-12px);}
+}
+
 canvas{ position:fixed; inset:0; z-index:0; }
 
-.container{ position:relative; width:480px; height:580px; z-index:1; }
+.container{ position:relative; width:480px; height:580px; z-index:1; opacity:0; transition:opacity 1.2s ease; }
+
+.container.show{ opacity:1; }
 
 .heart{
   width:100%;
@@ -108,14 +136,19 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </head>
 <body>
 
+<!-- 🎁 Tela da Caixinha -->
+<div class="gift-screen" id="giftScreen">
+  <div class="gift">🎁</div>
+  Clique para abrir
+</div>
+
 <canvas id="particles"></canvas>
 
-<!-- 🎵 Música de fundo -->
 <audio id="bg-music" loop>
   <source src="lucas.mp3" type="audio/mpeg">
 </audio>
 
-<div class="container">
+<div class="container" id="mainContent">
 
 <svg class="heart" viewBox="0 0 512 512">
   <defs>
@@ -137,6 +170,19 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </div>
 
 <script>
+
+/* 🎁 Abrir presente */
+const giftScreen = document.getElementById("giftScreen");
+const mainContent = document.getElementById("mainContent");
+const music = document.getElementById("bg-music");
+
+giftScreen.addEventListener("click", () => {
+  giftScreen.style.display = "none";
+  mainContent.classList.add("show");
+  music.volume = 0.6;
+  music.play();
+  setTimeout(type, 800);
+});
 
 /* ---------------- DIGITAÇÃO ---------------- */
 const msg = [
@@ -183,16 +229,7 @@ function type() {
   }
 }
 
-setTimeout(type, 1500);
-
-/* 🎵 Ativa música no primeiro clique */
-document.addEventListener("click", function () {
-  const music = document.getElementById("bg-music");
-  music.volume = 0.6;
-  music.play();
-}, { once: true });
-
-/* restante do JS continua exatamente igual ao seu original */
+/* resto das animações permanece igual ao seu código original */
 
 </script>
 </body>
