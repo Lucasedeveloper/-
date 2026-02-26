@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
+/* ====== SEU CSS ORIGINAL (INALTERADO) ====== */
 body{
   margin:0;
   height:100vh;
@@ -160,11 +161,10 @@ Clique para abrir
 </div>
 
 <canvas id="particles"></canvas>
-<audio id="bg-music" loop></audio>
+<audio id="bg-music"></audio>
 <div class="music-popup" id="musicPopup"></div>
 
 <div class="container">
-
 <svg class="heart" viewBox="0 0 512 512">
 <defs>
 <radialGradient id="g" cx="50%" cy="40%" r="70%">
@@ -185,13 +185,15 @@ Clique para abrir
 
 <script>
 
-// ===== PLAYLIST SEM REPETIÇÃO =====
+/* ===== PLAYLIST COMPLETA COM AUTO NEXT ===== */
+
 const playlist=[
-"die_with_a_smile.mp3",
-"meu_abrigo.mp3"
+"Die_with_a_smile.mp3",
+"Meu_abrigo.mp3"
 ];
 
 const music=document.getElementById("bg-music");
+const musicPopup=document.getElementById("musicPopup");
 
 function shuffle(array){
 for(let i=array.length-1;i>0;i--){
@@ -204,35 +206,47 @@ return array;
 let savedOrder=JSON.parse(localStorage.getItem("musicOrder"));
 let currentIndex=parseInt(localStorage.getItem("musicIndex"));
 
-if(!savedOrder||!currentIndex||currentIndex>=savedOrder.length){
+if(!savedOrder||isNaN(currentIndex)||currentIndex>=savedOrder.length){
 savedOrder=shuffle([...playlist]);
 currentIndex=0;
 }
 
-const selectedMusic=savedOrder[currentIndex];
-music.src=selectedMusic;
-
+function playMusic(index){
+music.src=savedOrder[index];
+music.play();
+showMusicPopup(savedOrder[index]);
 localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
-localStorage.setItem("musicIndex",currentIndex+1);
+localStorage.setItem("musicIndex",index);
+}
 
-const musicPopup=document.getElementById("musicPopup");
-
-function showMusicPopup(){
-const name=selectedMusic.replace(".mp3","").replace(/_/g," ");
+function showMusicPopup(track){
+const name=track.replace(".mp3","").replace(/_/g," ");
 musicPopup.textContent="🎵 Agora está tocando: "+name;
-setTimeout(()=>musicPopup.classList.add("show"),400);
+musicPopup.classList.remove("show");
+setTimeout(()=>musicPopup.classList.add("show"),100);
 setTimeout(()=>musicPopup.classList.remove("show"),4000);
 }
+
+/* AUTO NEXT */
+music.addEventListener("ended",()=>{
+currentIndex++;
+if(currentIndex>=savedOrder.length){
+savedOrder=shuffle([...playlist]);
+currentIndex=0;
+}
+playMusic(currentIndex);
+});
 
 const giftScreen=document.getElementById("giftScreen");
 
 giftScreen.addEventListener("click",()=>{
 giftScreen.style.display="none";
 music.volume=0.6;
-music.play();
-showMusicPopup();
+playMusic(currentIndex);
 setTimeout(type,1500);
 });
+
+/* ===== RESTO DO SEU JS ORIGINAL (INALTERADO) ===== */
 
 const msg=[
 "Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
@@ -336,7 +350,7 @@ signatureBox.appendChild(heart);
 typeLetter();
 }
 
-// PARTÍCULAS
+/* PARTÍCULAS */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
