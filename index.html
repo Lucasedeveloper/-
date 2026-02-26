@@ -16,7 +16,7 @@ body{
   font-family:'Segoe UI',sans-serif;
 }
 
-/* 🎁 Tela inicial */
+/* 🎁 TELA DO PRESENTE */
 .gift-screen{
   position:fixed;
   inset:0;
@@ -28,6 +28,7 @@ body{
   z-index:9999;
   cursor:pointer;
   color:white;
+  font-size:18px;
 }
 
 .gift{
@@ -51,10 +52,12 @@ canvas{ position:fixed; inset:0; z-index:0; }
   height:580px;
   z-index:1;
   opacity:0;
-  transition:opacity 1.2s ease;
+  transition:opacity 1s ease;
 }
 
 .container.show{ opacity:1; }
+
+/* restante do seu CSS original */
 
 .heart{
   width:100%;
@@ -143,7 +146,7 @@ canvas{ position:fixed; inset:0; z-index:0; }
 
 <div class="gift-screen" id="giftScreen">
   <div class="gift">🎁</div>
-  <div>Clique para abrir</div>
+  Clique para abrir
 </div>
 
 <canvas id="particles"></canvas>
@@ -174,6 +177,8 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </div>
 
 <script>
+
+/* 🎁 ABRIR PRESENTE */
 const giftScreen = document.getElementById("giftScreen");
 const mainContent = document.getElementById("mainContent");
 const music = document.getElementById("bg-music");
@@ -186,8 +191,65 @@ giftScreen.addEventListener("click", () => {
   setTimeout(type, 800);
 });
 
-/* restante do seu JS continua exatamente igual daqui para baixo */
-</script>
+/* DIGITAÇÃO ORIGINAL */
+const msg = [
+"Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
+"Nem tento esconder o quanto te adoro,",
+"Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
+"Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
+"Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
+"De um jeito calmo e sincero, você se tornou alguém muito especial para mim.",
+"♥"
+];
 
+const typed = document.getElementById("typed");
+let line = 0, char = 0;
+
+function type() {
+  if (line < msg.length) {
+    if (char < msg[line].length) {
+      typed.innerHTML += msg[line][char];
+      char++;
+      setTimeout(type, 55);
+    } else {
+      typed.innerHTML += "<br>";
+      line++;
+      char = 0;
+      setTimeout(type, 280);
+    }
+  }
+}
+
+/* PARTÍCULAS */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let w,h,parts=[];
+
+function resize(){
+  w=canvas.width=window.innerWidth;
+  h=canvas.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+for(let i=0;i<95;i++){
+  parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+1,s:Math.random()*0.5+0.2});
+}
+
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="white";
+  parts.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.y-=p.s;
+    if(p.y<0)p.y=h;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+</script>
 </body>
 </html>
