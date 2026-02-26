@@ -27,7 +27,6 @@ body{
   z-index:9999;
   cursor:pointer;
   color:white;
-  font-size:18px;
 }
 
 .gift{
@@ -97,8 +96,6 @@ canvas{ position:fixed; inset:0; z-index:0; }
   justify-content:center;
   gap:14px;
   min-height:82px;
-  position:relative;
-  top:-8px;
 }
 
 .final span{
@@ -106,7 +103,7 @@ canvas{ position:fixed; inset:0; z-index:0; }
   font-weight:900;
   opacity:0;
   transform:scale(.6);
-  transition:opacity .6s ease, transform .6s ease;
+  transition:all .6s ease;
 }
 
 .glow{
@@ -126,23 +123,10 @@ canvas{ position:fixed; inset:0; z-index:0; }
   font-weight:700;
   letter-spacing:2px;
   opacity:0;
-  min-height:55px;
-  text-shadow:0 0 15px rgba(255,179,209,.6);
   transition:opacity .8s ease;
 }
 
 .signature.show{ opacity:1; }
-
-.signature span{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(10px);
-  animation:signaturePop .5s forwards;
-}
-
-@keyframes signaturePop{
-  to{ opacity:1; transform:translateY(0); }
-}
 </style>
 </head>
 <body>
@@ -159,107 +143,74 @@ canvas{ position:fixed; inset:0; z-index:0; }
 </audio>
 
 <div class="container" id="mainContent">
-
 <svg class="heart" viewBox="0 0 512 512">
-  <defs>
-    <radialGradient id="g" cx="50%" cy="40%" r="70%">
-      <stop offset="0%" stop-color="#ff8fcf"/>
-      <stop offset="50%" stop-color="#ff2d75"/>
-      <stop offset="100%" stop-color="#b3003c"/>
-    </radialGradient>
-  </defs>
-  <path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="url(#g)"/>
+<path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="#ff2d75"/>
 </svg>
 
 <div class="content">
-  <div class="text" id="typed"></div>
-  <div class="final" id="final"></div>
-  <div class="signature" id="signature"></div>
+<div class="text" id="typed"></div>
+<div class="final" id="final"></div>
+<div class="signature" id="signature">Lucas</div>
 </div>
-
 </div>
 
 <script>
 
-/* 🎁 ABRIR PRESENTE */
-const giftScreen=document.getElementById("giftScreen");
-const mainContent=document.getElementById("mainContent");
+const gift=document.getElementById("giftScreen");
+const main=document.getElementById("mainContent");
 const music=document.getElementById("bg-music");
 
-giftScreen.addEventListener("click",()=>{
-  giftScreen.style.display="none";
-  mainContent.classList.add("show");
-  music.volume=0.6;
+gift.onclick=()=>{
+  gift.style.display="none";
+  main.classList.add("show");
   music.play();
   setTimeout(type,800);
-});
+};
 
-/* -------- DIGITAÇÃO -------- */
-const msg=[
-"Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
-"Nem tento esconder o quanto te adoro,",
-"Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
-"Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
-"Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
-"De um jeito calmo e sincero, você se tornou alguém muito especial para mim."
-];
-
-const highlight=[
-{t:"já",c:"#00eaff"},
-{t:"adoro,",c:"#ff66cc"},
-{t:"e",c:"#00ff88"},
-{t:"acelera!",c:"#ff3333"},
-{t:"que",c:"#ffff66"},
-{t:"mim.",c:"#ff99ff"}
+const lines=[
+["Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, ","já","#00eaff"],
+["Nem tento esconder o quanto te ","adoro,","#ff66cc"],
+["Gosto desse seu jeito leve, divertido e natural sendo você mesma ","e","#00ff88"],
+["Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração ","acelera!","#ff3333"],
+["Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba ","que","#ffff66"],
+["De um jeito calmo e sincero, você se tornou alguém muito especial para ","mim.","#ff99ff"]
 ];
 
 const typed=document.getElementById("typed");
-let line=0,char=0;
+let l=0,c=0;
 
 function type(){
-  if(line<msg.length){
-    if(char<msg[line].length){
-      typed.innerHTML+=msg[line][char];
-      char++;
-      setTimeout(type,55);
+  if(l<lines.length){
+    let text=lines[l][0];
+    let word=lines[l][1];
+    let color=lines[l][2];
+
+    if(c<text.length){
+      typed.innerHTML+=text[c];
+      c++;
+      setTimeout(type,40);
     }else{
-      typed.innerHTML+="<br>";
-      line++;
-      char=0;
-      setTimeout(type,280);
+      typed.innerHTML+=`<span class="highlight" style="color:${color}">${word}</span><br>`;
+      l++;
+      c=0;
+      setTimeout(type,300);
     }
   }else{
-    applyHighlight();
     showFinal();
   }
 }
 
-/* -------- COLORIR PALAVRAS -------- */
-function applyHighlight(){
-  let html=typed.innerHTML;
-  highlight.forEach(h=>{
-    html=html.replace(h.t,`<span class="highlight" style="color:${h.c}">${h.t}</span>`);
-  });
-  typed.innerHTML=html;
-}
-
-/* -------- MOSTRAR INGRED -------- */
 function showFinal(){
   const final=document.getElementById("final");
-  const letters=[
-    {l:"I",c:"#00eaff"},
-    {l:"N",c:"#ff66cc"},
-    {l:"G",c:"#00ff88"},
-    {l:"R",c:"#ff3333"},
-    {l:"E",c:"#ffff66"},
-    {l:"D",c:"#ff99ff"}
-  ];
+  const letters=["I","N","G","R","E","D"];
+  const colors=["#00eaff","#ff66cc","#00ff88","#ff3333","#ffff66","#ff99ff"];
 
-  letters.forEach((item,i)=>{
-    const span=document.createElement("span");
-    span.textContent=item.l;
-    span.style.color=item.c;
+  letters.forEach((letter,i)=>{
+    let span=document.createElement("span");
+    span.textContent=letter;
+    span.style.color=colors[i];
     final.appendChild(span);
+
     setTimeout(()=>{
       span.style.opacity=1;
       span.style.transform="scale(1)";
@@ -267,24 +218,13 @@ function showFinal(){
     },i*400);
   });
 
-  setTimeout(showSignature,letters.length*400+600);
+  setTimeout(()=>{
+    document.getElementById("signature").classList.add("show");
+  },3000);
 }
 
-/* -------- ASSINATURA -------- */
-function showSignature(){
-  const signature=document.getElementById("signature");
-  const name="Lucas";
-  signature.classList.add("show");
+/* partículas */
 
-  name.split("").forEach((letter,i)=>{
-    const span=document.createElement("span");
-    span.textContent=letter;
-    span.style.animationDelay=`${i*0.2}s`;
-    signature.appendChild(span);
-  });
-}
-
-/* -------- PARTÍCULAS -------- */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
@@ -294,9 +234,9 @@ function resize(){
   h=canvas.height=window.innerHeight;
 }
 resize();
-window.addEventListener("resize",resize);
+window.onresize=resize;
 
-for(let i=0;i<95;i++){
+for(let i=0;i<80;i++){
   parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+1,s:Math.random()*0.5+0.2});
 }
 
