@@ -188,9 +188,7 @@ Clique para abrir
 // ===== PLAYLIST SEM REPETIÇÃO =====
 const playlist=[
 "die_with_a_smile.mp3",
-"meu_abrigo.mp3",
-"musica3.mp3",
-"musica4.mp3"
+"meu_abrigo.mp3"
 ];
 
 const music=document.getElementById("bg-music");
@@ -221,7 +219,7 @@ const musicPopup=document.getElementById("musicPopup");
 
 function showMusicPopup(){
 const name=selectedMusic.replace(".mp3","").replace(/_/g," ");
-musicPopup.textContent="🎵 Hoje está tocando: "+name;
+musicPopup.textContent="🎵 Agora está tocando: "+name;
 setTimeout(()=>musicPopup.classList.add("show"),400);
 setTimeout(()=>musicPopup.classList.remove("show"),4000);
 }
