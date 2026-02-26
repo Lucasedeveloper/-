@@ -16,7 +16,6 @@ body{
   font-family:'Segoe UI',sans-serif;
 }
 
-/* 🎁 TELA DO PRESENTE */
 .gift-screen{
   position:fixed;
   inset:0;
@@ -57,8 +56,6 @@ canvas{ position:fixed; inset:0; z-index:0; }
 
 .container.show{ opacity:1; }
 
-/* restante do seu CSS original */
-
 .heart{
   width:100%;
   height:100%;
@@ -83,7 +80,11 @@ canvas{ position:fixed; inset:0; z-index:0; }
   gap:24px;
 }
 
-.text{ color:#fff; font-size:15px; line-height:1.75; }
+.text{
+  color:#fff;
+  font-size:15px;
+  line-height:1.75;
+}
 
 .highlight{
   font-weight:900;
@@ -108,37 +109,39 @@ canvas{ position:fixed; inset:0; z-index:0; }
   transition:opacity .6s ease, transform .6s ease;
 }
 
-.glow{ animation:glow 1.4s infinite alternate; }
+.glow{
+  animation:glow 1.4s infinite alternate;
+}
 
 @keyframes glow{
   from{filter:brightness(1);}
   to{filter:brightness(2.4);}
 }
 
-.signature {
-  margin-top: 25px;
-  color: #00ffff;
-  font-family: 'Dancing Script', cursive;
-  font-size: 42px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  opacity: 0;
-  min-height: 55px;
-  text-shadow: 0 0 15px rgba(255, 179, 209, 0.6);
-  transition: opacity 0.8s ease;
+.signature{
+  margin-top:25px;
+  color:#00ffff;
+  font-family:'Dancing Script',cursive;
+  font-size:42px;
+  font-weight:700;
+  letter-spacing:2px;
+  opacity:0;
+  min-height:55px;
+  text-shadow:0 0 15px rgba(255,179,209,.6);
+  transition:opacity .8s ease;
 }
 
-.signature.show { opacity: 1; }
+.signature.show{ opacity:1; }
 
-.signature span {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(10px);
-  animation: signaturePop 0.5s forwards;
+.signature span{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(10px);
+  animation:signaturePop .5s forwards;
 }
 
-@keyframes signaturePop {
-  to { opacity: 1; transform: translateY(0); }
+@keyframes signaturePop{
+  to{ opacity:1; transform:translateY(0); }
 }
 </style>
 </head>
@@ -179,50 +182,111 @@ canvas{ position:fixed; inset:0; z-index:0; }
 <script>
 
 /* 🎁 ABRIR PRESENTE */
-const giftScreen = document.getElementById("giftScreen");
-const mainContent = document.getElementById("mainContent");
-const music = document.getElementById("bg-music");
+const giftScreen=document.getElementById("giftScreen");
+const mainContent=document.getElementById("mainContent");
+const music=document.getElementById("bg-music");
 
-giftScreen.addEventListener("click", () => {
-  giftScreen.style.display = "none";
+giftScreen.addEventListener("click",()=>{
+  giftScreen.style.display="none";
   mainContent.classList.add("show");
-  music.volume = 0.6;
+  music.volume=0.6;
   music.play();
-  setTimeout(type, 800);
+  setTimeout(type,800);
 });
 
-/* DIGITAÇÃO ORIGINAL */
-const msg = [
+/* -------- DIGITAÇÃO -------- */
+const msg=[
 "Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
 "Nem tento esconder o quanto te adoro,",
 "Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
 "Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
 "Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
-"De um jeito calmo e sincero, você se tornou alguém muito especial para mim.",
-"♥"
+"De um jeito calmo e sincero, você se tornou alguém muito especial para mim."
 ];
 
-const typed = document.getElementById("typed");
-let line = 0, char = 0;
+const highlight=[
+{t:"já",c:"#00eaff"},
+{t:"adoro,",c:"#ff66cc"},
+{t:"e",c:"#00ff88"},
+{t:"acelera!",c:"#ff3333"},
+{t:"que",c:"#ffff66"},
+{t:"mim.",c:"#ff99ff"}
+];
 
-function type() {
-  if (line < msg.length) {
-    if (char < msg[line].length) {
-      typed.innerHTML += msg[line][char];
+const typed=document.getElementById("typed");
+let line=0,char=0;
+
+function type(){
+  if(line<msg.length){
+    if(char<msg[line].length){
+      typed.innerHTML+=msg[line][char];
       char++;
-      setTimeout(type, 55);
-    } else {
-      typed.innerHTML += "<br>";
+      setTimeout(type,55);
+    }else{
+      typed.innerHTML+="<br>";
       line++;
-      char = 0;
-      setTimeout(type, 280);
+      char=0;
+      setTimeout(type,280);
     }
+  }else{
+    applyHighlight();
+    showFinal();
   }
 }
 
-/* PARTÍCULAS */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
+/* -------- COLORIR PALAVRAS -------- */
+function applyHighlight(){
+  let html=typed.innerHTML;
+  highlight.forEach(h=>{
+    html=html.replace(h.t,`<span class="highlight" style="color:${h.c}">${h.t}</span>`);
+  });
+  typed.innerHTML=html;
+}
+
+/* -------- MOSTRAR INGRED -------- */
+function showFinal(){
+  const final=document.getElementById("final");
+  const letters=[
+    {l:"I",c:"#00eaff"},
+    {l:"N",c:"#ff66cc"},
+    {l:"G",c:"#00ff88"},
+    {l:"R",c:"#ff3333"},
+    {l:"E",c:"#ffff66"},
+    {l:"D",c:"#ff99ff"}
+  ];
+
+  letters.forEach((item,i)=>{
+    const span=document.createElement("span");
+    span.textContent=item.l;
+    span.style.color=item.c;
+    final.appendChild(span);
+    setTimeout(()=>{
+      span.style.opacity=1;
+      span.style.transform="scale(1)";
+      span.classList.add("glow");
+    },i*400);
+  });
+
+  setTimeout(showSignature,letters.length*400+600);
+}
+
+/* -------- ASSINATURA -------- */
+function showSignature(){
+  const signature=document.getElementById("signature");
+  const name="Lucas";
+  signature.classList.add("show");
+
+  name.split("").forEach((letter,i)=>{
+    const span=document.createElement("span");
+    span.textContent=letter;
+    span.style.animationDelay=`${i*0.2}s`;
+    signature.appendChild(span);
+  });
+}
+
+/* -------- PARTÍCULAS -------- */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
 let w,h,parts=[];
 
 function resize(){
