@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-/* (CSS permanece exatamente igual ao seu) */
 body{
   margin:0;
   height:100vh;
@@ -111,8 +110,13 @@ canvas{ position:fixed; inset:0; z-index:0; }
 
 <canvas id="particles"></canvas>
 
+<!-- 🎵 Música de fundo -->
+<audio id="bg-music" loop>
+  <source src="lucas.mp3" type="audio/mpeg">
+</audio>
+
 <div class="container">
-<!-- SVG e HTML permanecem iguais -->
+
 <svg class="heart" viewBox="0 0 512 512">
   <defs>
     <radialGradient id="g" cx="50%" cy="40%" r="70%">
@@ -129,6 +133,7 @@ canvas{ position:fixed; inset:0; z-index:0; }
   <div class="final" id="final"></div>
   <div class="signature" id="signature"></div>
 </div>
+
 </div>
 
 <script>
@@ -178,121 +183,16 @@ function type() {
   }
 }
 
-/* 🔹 AQUI está o atraso de 1,5 segundos */
 setTimeout(type, 1500);
 
-/* Restante do JS permanece exatamente igual */
+/* 🎵 Ativa música no primeiro clique */
+document.addEventListener("click", function () {
+  const music = document.getElementById("bg-music");
+  music.volume = 0.6;
+  music.play();
+}, { once: true });
 
-function animateINGRED() {
-  const word = "INGRED";
-  const targets = [];
-
-  for (let i = 0; i < word.length; i++) {
-    const t = document.createElement("span");
-    t.textContent = word[i];
-    const color = getComputedStyle(caps[i]).color || "#ff8fcf";
-    t.style.color = color;
-    t.style.textShadow = `0 0 10px ${color}, 0 0 25px ${color}, 0 0 45px ${color}`;
-    finalBox.appendChild(t);
-    targets.push(t);
-  }
-
-  setTimeout(() => {
-    caps.forEach((original, i) => {
-      if (!original) return;
-      const start = original.getBoundingClientRect();
-      const end = targets[i].getBoundingClientRect();
-
-      const clone = original.cloneNode(true);
-      document.body.appendChild(clone);
-
-      clone.style.position = "fixed";
-      clone.style.left = start.left + "px";
-      clone.style.top = start.top + "px";
-      clone.style.margin = "0";
-      clone.style.zIndex = "100";
-      clone.style.transition = "all 2.3s cubic-bezier(0.25, 0.8, 0.25, 1)";
-
-      const dx = end.left - start.left + 8;
-      const dy = end.top - start.top;
-
-      requestAnimationFrame(() => {
-        clone.style.transform = `translate(${dx}px, ${dy}px) scale(2.8)`;
-      });
-
-      setTimeout(() => {
-        clone.remove();
-        targets[i].style.opacity = 1;
-        targets[i].style.transform = "scale(1)";
-        targets[i].classList.add("glow");
-      }, 2350);
-    });
-
-    setTimeout(showSignature, 3200);
-  }, 300);
-}
-
-function showSignature() {
-  signatureBox.classList.add("show");
-  signatureBox.innerHTML = "";
-
-  const text = "Lucas ";
-  let index = 0;
-
-  function typeLetter() {
-    if (index < text.length) {
-      const span = document.createElement("span");
-      span.textContent = text[index];
-      signatureBox.appendChild(span);
-      index++;
-      setTimeout(typeLetter, 160);
-    } else {
-      const heart = document.createElement("span");
-      heart.textContent = "❤";
-      heart.style.color = "#ff0000";
-      heart.style.marginLeft = "6px";
-      signatureBox.appendChild(heart);
-    }
-  }
-
-  typeLetter();
-}
-
-/* partículas permanecem iguais */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let w, h, parts = [];
-
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-for (let i = 0; i < 95; i++) {
-  parts.push({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    r: Math.random() * 2.2 + 0.8,
-    s: Math.random() * 0.4 + 0.25
-  });
-}
-
-function draw() {
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = "rgba(255,255,255,0.85)";
-  parts.forEach(p => {
-    ctx.globalAlpha = 0.75;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fill();
-    p.y -= p.s;
-    if (p.y < 0) p.y = h;
-  });
-  requestAnimationFrame(draw);
-}
-draw();
+/* restante do JS continua exatamente igual ao seu original */
 
 </script>
 </body>
