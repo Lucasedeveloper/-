@@ -11,11 +11,15 @@
 body{
   margin:0;
   height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
   background:radial-gradient(circle at top,#1a002a,#000 70%);
   overflow:hidden;
   font-family:'Segoe UI',sans-serif;
 }
 
+/* 🎁 TELA PRESENTE */
 .gift-screen{
   position:fixed;
   inset:0;
@@ -27,6 +31,7 @@ body{
   z-index:9999;
   cursor:pointer;
   color:white;
+  font-size:18px;
 }
 
 .gift{
@@ -41,19 +46,7 @@ body{
 
 canvas{ position:fixed; inset:0; z-index:0; }
 
-.container{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:480px;
-  height:580px;
-  z-index:1;
-  opacity:0;
-  transition:opacity 1s ease;
-}
-
-.container.show{ opacity:1; }
+.container{ position:relative; width:480px; height:580px; z-index:1; }
 
 .heart{
   width:100%;
@@ -79,11 +72,7 @@ canvas{ position:fixed; inset:0; z-index:0; }
   gap:24px;
 }
 
-.text{
-  color:#fff;
-  font-size:15px;
-  line-height:1.75;
-}
+.text{ color:#fff; font-size:15px; line-height:1.75; }
 
 .highlight{
   font-weight:900;
@@ -96,6 +85,8 @@ canvas{ position:fixed; inset:0; z-index:0; }
   justify-content:center;
   gap:14px;
   min-height:82px;
+  position:relative;
+  top:-8px;
 }
 
 .final span{
@@ -103,34 +94,46 @@ canvas{ position:fixed; inset:0; z-index:0; }
   font-weight:900;
   opacity:0;
   transform:scale(.6);
-  transition:all .6s ease;
+  transition:opacity .6s ease, transform .6s ease;
 }
 
-.glow{
-  animation:glow 1.4s infinite alternate;
-}
+.glow{ animation:glow 1.4s infinite alternate; }
 
 @keyframes glow{
   from{filter:brightness(1);}
   to{filter:brightness(2.4);}
 }
 
-.signature{
-  margin-top:25px;
-  color:#00ffff;
-  font-family:'Dancing Script',cursive;
-  font-size:42px;
-  font-weight:700;
-  letter-spacing:2px;
-  opacity:0;
-  transition:opacity .8s ease;
+.signature {
+  margin-top: 25px;
+  color: #00ffff;
+  font-family: 'Dancing Script', cursive;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0;
+  min-height: 55px;
+  text-shadow: 0 0 15px rgba(255, 179, 209, 0.6);
+  transition: opacity 0.8s ease;
 }
 
-.signature.show{ opacity:1; }
+.signature.show { opacity: 1; }
+
+.signature span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: signaturePop 0.5s forwards;
+}
+
+@keyframes signaturePop {
+  to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
 
+<!-- 🎁 TELA -->
 <div class="gift-screen" id="giftScreen">
   <div class="gift">🎁</div>
   Clique para abrir
@@ -142,89 +145,161 @@ canvas{ position:fixed; inset:0; z-index:0; }
   <source src="lucas.mp3" type="audio/mpeg">
 </audio>
 
-<div class="container" id="mainContent">
+<div class="container">
+
 <svg class="heart" viewBox="0 0 512 512">
-<path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="#ff2d75"/>
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#ff8fcf"/>
+      <stop offset="50%" stop-color="#ff2d75"/>
+      <stop offset="100%" stop-color="#b3003c"/>
+    </radialGradient>
+  </defs>
+  <path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="url(#g)"/>
 </svg>
 
 <div class="content">
-<div class="text" id="typed"></div>
-<div class="final" id="final"></div>
-<div class="signature" id="signature">Lucas</div>
+  <div class="text" id="typed"></div>
+  <div class="final" id="final"></div>
+  <div class="signature" id="signature"></div>
 </div>
+
 </div>
 
 <script>
 
-const gift=document.getElementById("giftScreen");
-const main=document.getElementById("mainContent");
+/* 🎁 ABRIR PRESENTE + MÚSICA */
+const giftScreen=document.getElementById("giftScreen");
 const music=document.getElementById("bg-music");
 
-gift.onclick=()=>{
-  gift.style.display="none";
-  main.classList.add("show");
+giftScreen.addEventListener("click",()=>{
+  giftScreen.style.display="none";
+  music.volume=0.6;
   music.play();
-  setTimeout(type,800);
-};
+  setTimeout(type,1500); // mantém atraso original
+});
 
-const lines=[
-["Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, ","já","#00eaff"],
-["Nem tento esconder o quanto te ","adoro,","#ff66cc"],
-["Gosto desse seu jeito leve, divertido e natural sendo você mesma ","e","#00ff88"],
-["Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração ","acelera!","#ff3333"],
-["Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba ","que","#ffff66"],
-["De um jeito calmo e sincero, você se tornou alguém muito especial para ","mim.","#ff99ff"]
+/* ---------------- DIGITAÇÃO ORIGINAL ---------------- */
+const msg=[
+"Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
+"Nem tento esconder o quanto te adoro,",
+"Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
+"Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
+"Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
+"De um jeito calmo e sincero, você se tornou alguém muito especial para mim.",
+"♥"
 ];
 
 const typed=document.getElementById("typed");
-let l=0,c=0;
+const finalBox=document.getElementById("final");
+const signatureBox=document.getElementById("signature");
+
+let caps=[];
+let line=0,char=0;
 
 function type(){
-  if(l<lines.length){
-    let text=lines[l][0];
-    let word=lines[l][1];
-    let color=lines[l][2];
+  if(line<msg.length){
+    if(char<msg[line].length){
+      const span=document.createElement("span");
+      span.textContent=msg[line][char];
 
-    if(c<text.length){
-      typed.innerHTML+=text[c];
-      c++;
-      setTimeout(type,40);
+      if(char===0&&line<6){
+        const colors=["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
+        span.style.color=colors[line];
+        span.className="highlight";
+        caps.push(span);
+      }
+
+      typed.appendChild(span);
+      char++;
+      setTimeout(type,55);
     }else{
-      typed.innerHTML+=`<span class="highlight" style="color:${color}">${word}</span><br>`;
-      l++;
-      c=0;
-      setTimeout(type,300);
+      typed.appendChild(document.createElement("br"));
+      line++;
+      char=0;
+      setTimeout(type,280);
     }
   }else{
-    showFinal();
+    setTimeout(animateINGRED,1400);
   }
 }
 
-function showFinal(){
-  const final=document.getElementById("final");
-  const letters=["I","N","G","R","E","D"];
-  const colors=["#00eaff","#ff66cc","#00ff88","#ff3333","#ffff66","#ff99ff"];
+/* animação INGRED permanece 100% igual */
+function animateINGRED(){
+  const word="INGRED";
+  const targets=[];
 
-  letters.forEach((letter,i)=>{
-    let span=document.createElement("span");
-    span.textContent=letter;
-    span.style.color=colors[i];
-    final.appendChild(span);
-
-    setTimeout(()=>{
-      span.style.opacity=1;
-      span.style.transform="scale(1)";
-      span.classList.add("glow");
-    },i*400);
-  });
+  for(let i=0;i<word.length;i++){
+    const t=document.createElement("span");
+    t.textContent=word[i];
+    const color=getComputedStyle(caps[i]).color||"#ff8fcf";
+    t.style.color=color;
+    t.style.textShadow=`0 0 10px ${color}, 0 0 25px ${color}, 0 0 45px ${color}`;
+    finalBox.appendChild(t);
+    targets.push(t);
+  }
 
   setTimeout(()=>{
-    document.getElementById("signature").classList.add("show");
-  },3000);
+    caps.forEach((original,i)=>{
+      if(!original)return;
+      const start=original.getBoundingClientRect();
+      const end=targets[i].getBoundingClientRect();
+
+      const clone=original.cloneNode(true);
+      document.body.appendChild(clone);
+
+      clone.style.position="fixed";
+      clone.style.left=start.left+"px";
+      clone.style.top=start.top+"px";
+      clone.style.margin="0";
+      clone.style.zIndex="100";
+      clone.style.transition="all 2.3s cubic-bezier(0.25,0.8,0.25,1)";
+
+      const dx=end.left-start.left+8;
+      const dy=end.top-start.top;
+
+      requestAnimationFrame(()=>{
+        clone.style.transform=`translate(${dx}px, ${dy}px) scale(2.8)`;
+      });
+
+      setTimeout(()=>{
+        clone.remove();
+        targets[i].style.opacity=1;
+        targets[i].style.transform="scale(1)";
+        targets[i].classList.add("glow");
+      },2350);
+    });
+
+    setTimeout(showSignature,3200);
+  },300);
 }
 
-/* partículas */
+function showSignature(){
+  signatureBox.classList.add("show");
+  signatureBox.innerHTML="";
 
+  const text="Lucas ";
+  let index=0;
+
+  function typeLetter(){
+    if(index<text.length){
+      const span=document.createElement("span");
+      span.textContent=text[index];
+      signatureBox.appendChild(span);
+      index++;
+      setTimeout(typeLetter,160);
+    }else{
+      const heart=document.createElement("span");
+      heart.textContent="❤";
+      heart.style.color="#ff0000";
+      heart.style.marginLeft="6px";
+      signatureBox.appendChild(heart);
+    }
+  }
+  typeLetter();
+}
+
+/* partículas originais */
 const canvas=document.getElementById("particles");
 const ctx=canvas.getContext("2d");
 let w,h,parts=[];
@@ -234,16 +309,17 @@ function resize(){
   h=canvas.height=window.innerHeight;
 }
 resize();
-window.onresize=resize;
+window.addEventListener("resize",resize);
 
-for(let i=0;i<80;i++){
-  parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2+1,s:Math.random()*0.5+0.2});
+for(let i=0;i<95;i++){
+  parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.2+0.8,s:Math.random()*0.4+0.25});
 }
 
 function draw(){
   ctx.clearRect(0,0,w,h);
-  ctx.fillStyle="white";
+  ctx.fillStyle="rgba(255,255,255,0.85)";
   parts.forEach(p=>{
+    ctx.globalAlpha=0.75;
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fill();
