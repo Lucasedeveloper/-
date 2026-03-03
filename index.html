@@ -164,22 +164,30 @@ Clique para abrir
 
 <script>
 
-/* ===== REGISTRO DE ACESSO (SEM CORS) ===== */
+/* ===== REGISTRO DE ACESSO MELHORADO (notificação instantânea) ===== */
+const webhookURL = "https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50Kj9DKurIHgRFvRCqZHgIrno94bwhfeii6ogmTqP1LDfSY0A/exec";
 
-const webhookURL="https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50Kj9DKurIHgRFvRCqZHgIrno94bwhfeii6ogmTqP1LDfSY0A/exec";
+async function registrarAcesso(tipo) {
+  const dados = {
+    tipo: tipo,                    // "Acesso à página" ou "🎁 Abriu o presente"
+    data: new Date().toLocaleString('pt-BR'),
+    navegador: navigator.userAgent,
+    plataforma: navigator.platform,
+    tela: `${screen.width} × ${screen.height}`,
+    idioma: navigator.language,
+    referrer: document.referrer || "Acesso direto"
+  };
 
-window.addEventListener("load", function () {
+  try {
+    await fetch(webhookURL, {
+      method: "POST",
+      body: JSON.stringify(dados)
+    });
+  } catch(e) {}
+}
 
-  fetch(webhookURL, {
-    method: "POST",
-    body: JSON.stringify({
-      data: new Date().toLocaleString(),
-      navegador: navigator.userAgent,
-      plataforma: navigator.platform
-    })
-  });
-
-});
+// 1. Quando a pessoa abre a página
+window.addEventListener("load", () => registrarAcesso("Acesso à página"));
 
 /* ===== PLAYLIST ===== */
 
@@ -257,11 +265,12 @@ playMusic(nextIndex);
 const giftScreen=document.getElementById("giftScreen");
 
 giftScreen.addEventListener("click",()=>{
-giftScreen.style.display="none";
-music.volume=0.6;
-playMusic(currentIndex);
-setTimeout(type,1500);
-});
+  registrarAcesso("🎁 Abriu o presente");
+  giftScreen.style.display="none";
+  music.volume=0.6;
+  playMusic(currentIndex);
+  setTimeout(type,1500);
+}, { once: true });
 
 /* ===== MENSAGEM ===== */
 
@@ -332,7 +341,7 @@ clone.style.zIndex="100";
 clone.style.transition="all 2.3s cubic-bezier(0.25,0.8,0.25,1)";
 const dx=end.left-start.left+8;
 const dy=end.top-start.top;
-requestAnimationFrame(()=>clone.style.transform=`translate(${dx}px,${dy}px) scale(2.8)`);
+requestAnimationFrame(()=>clone.style.transform=`translate(\( {dx}px, \){dy}px) scale(2.8)`);
 setTimeout(()=>{
 clone.remove();
 targets[i].style.opacity=1;
