@@ -171,16 +171,19 @@ const webhookURL="https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50
 window.addEventListener("load",function(){
 fetch(webhookURL,{
 method:"POST",
-mode:"no-cors",
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
 data:new Date().toLocaleString(),
 navegador:navigator.userAgent,
 plataforma:navigator.platform
 })
-});
+})
+.catch(()=>{});
 });
 
-/* ===== PLAYLIST SEM REPETIR ATÉ TERMINAR E NÃO REPETE A ÚLTIMA ===== */
+/* ===== PLAYLIST ===== */
 
 const playlist=[
 "Die_with_a_smile.mp3",
@@ -209,11 +212,11 @@ savedOrder=shuffle([...playlist]);
 currentIndex=0;
 }
 
-if(isNaN(currentIndex) || currentIndex>=savedOrder.length){
+if(isNaN(currentIndex)||currentIndex>=savedOrder.length){
 let newOrder;
 do{
 newOrder=shuffle([...playlist]);
-}while(lastTrack && newOrder[0]===lastTrack && playlist.length>1);
+}while(lastTrack&&newOrder[0]===lastTrack&&playlist.length>1);
 savedOrder=newOrder;
 currentIndex=0;
 }
@@ -240,11 +243,11 @@ let nextIndex=parseInt(localStorage.getItem("musicIndex"));
 let order=JSON.parse(localStorage.getItem("musicOrder"));
 let last=localStorage.getItem("lastTrack");
 
-if(isNaN(nextIndex) || nextIndex>=order.length){
+if(isNaN(nextIndex)||nextIndex>=order.length){
 let newOrder;
 do{
 newOrder=shuffle([...playlist]);
-}while(last && newOrder[0]===last && playlist.length>1);
+}while(last&&newOrder[0]===last&&playlist.length>1);
 order=newOrder;
 nextIndex=0;
 localStorage.setItem("musicOrder",JSON.stringify(order));
