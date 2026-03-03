@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INGRED</title>
+<title>♥️ℹ️🆖🟥</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
@@ -39,12 +39,8 @@ body{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-15px);}
 }
-.container{
-  position:relative;
-  width:480px;
-  height:580px;
-  z-index:1;
-}
+canvas{ position:fixed; inset:0; z-index:0; }
+.container{ position:relative; width:480px; height:580px; z-index:1; }
 .heart{
   width:100%;
   height:100%;
@@ -66,12 +62,7 @@ body{
   flex-direction:column;
   gap:24px;
 }
-.text{
-  color:#fff;
-  font-size:15px;
-  line-height:1.7;
-  min-height:120px;
-}
+.text{ color:#fff; font-size:15px; line-height:1.75; }
 .highlight{
   font-weight:900;
   font-size:20px;
@@ -82,6 +73,8 @@ body{
   justify-content:center;
   gap:14px;
   min-height:82px;
+  position:relative;
+  top:-8px;
 }
 .final span{
   font-size:58px;
@@ -90,9 +83,7 @@ body{
   transform:scale(.6);
   transition:opacity .6s ease, transform .6s ease;
 }
-.glow{
-  animation:glow 1.4s infinite alternate;
-}
+.glow{ animation:glow 1.4s infinite alternate; }
 @keyframes glow{
   from{filter:brightness(1);}
   to{filter:brightness(2.4);}
@@ -106,6 +97,7 @@ body{
   letter-spacing:2px;
   opacity:0;
   min-height:55px;
+  text-shadow:0 0 15px rgba(255,179,209,.6);
   transition:opacity .8s ease;
 }
 .signature.show{opacity:1;}
@@ -118,6 +110,26 @@ body{
 @keyframes signaturePop{
   to{opacity:1;transform:translateY(0);}
 }
+.music-popup{
+  position:fixed;
+  top:30px;
+  left:50%;
+  transform:translateX(-50%) translateY(-20px);
+  background:rgba(0,0,0,.75);
+  padding:12px 22px;
+  border-radius:30px;
+  color:#fff;
+  font-size:14px;
+  letter-spacing:1px;
+  opacity:0;
+  z-index:10000;
+  backdrop-filter:blur(6px);
+  transition:all .6s ease;
+}
+.music-popup.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
 </style>
 </head>
 <body>
@@ -127,7 +139,9 @@ body{
 Clique para abrir
 </div>
 
+<canvas id="particles"></canvas>
 <audio id="bg-music"></audio>
+<div class="music-popup" id="musicPopup"></div>
 
 <div class="container">
 <svg class="heart" viewBox="0 0 512 512">
@@ -150,106 +164,240 @@ Clique para abrir
 
 <script>
 
-/* ===== REGISTRO GOOGLE SHEETS ===== */
+/* ===== REGISTRO DE ACESSO ===== */
 
-const webhookURL = "https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50Kj9DKurIHgRFvRCqZHgIrno94bwhfeii6ogmTqP1LDfSY0A/exec";
+const webhookURL="https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50Kj9DKurIHgRFvRCqZHgIrno94bwhfeii6ogmTqP1LDfSY0A/exec";
 
-const params = new URLSearchParams(window.location.search);
-const pessoa = params.get("pessoa") || "desconhecido";
-
-window.addEventListener("load", function(){
-  fetch(webhookURL,{
-    method:"POST",
-    mode:"no-cors",
-    body:JSON.stringify({
-      pessoa:pessoa,
-      navegador:navigator.userAgent,
-      plataforma:navigator.platform,
-      data:new Date().toLocaleString()
-    })
-  });
+window.addEventListener("load",function(){
+fetch(webhookURL,{
+method:"POST",
+mode:"no-cors",
+body:JSON.stringify({
+data:new Date().toLocaleString(),
+navegador:navigator.userAgent,
+plataforma:navigator.platform
+})
+});
 });
 
-/* ===== MÚSICAS SEM REPETIR ===== */
+/* ===== PLAYLIST SEM REPETIR ATÉ TERMINAR E NÃO REPETE A ÚLTIMA ===== */
 
-const musicas=["lucas.mp3","musica2.mp3","musica3.mp3"];
-let tocadas=JSON.parse(localStorage.getItem("tocadas"))||[];
+const playlist=[
+"Die_with_a_smile.mp3",
+"Meu_abrigo.mp3",
+"Amo_noite_e_dia.mp3",
+"Esperando_na_janela.mp3"
+];
 
-function escolherMusica(){
-  if(tocadas.length===musicas.length){
-    tocadas=[];
-  }
-  let restantes=musicas.filter(m=>!tocadas.includes(m));
-  let escolhida=restantes[Math.floor(Math.random()*restantes.length)];
-  tocadas.push(escolhida);
-  localStorage.setItem("tocadas",JSON.stringify(tocadas));
-  return escolhida;
+const music=document.getElementById("bg-music");
+const musicPopup=document.getElementById("musicPopup");
+
+function shuffle(array){
+for(let i=array.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[array[i],array[j]]=[array[j],array[i]];
+}
+return array;
 }
 
-const audio=document.getElementById("bg-music");
-audio.src=escolherMusica();
-audio.loop=false;
+let savedOrder=JSON.parse(localStorage.getItem("musicOrder"));
+let currentIndex=parseInt(localStorage.getItem("musicIndex"));
+let lastTrack=localStorage.getItem("lastTrack");
 
-/* ===== TEXTO ANIMADO ===== */
+if(!savedOrder){
+savedOrder=shuffle([...playlist]);
+currentIndex=0;
+}
 
-const texto=`Você é uma pessoa incrível.
-Eu adoro o seu jeito.
-Você ilumina tudo ao seu redor.`;
+if(isNaN(currentIndex) || currentIndex>=savedOrder.length){
+let newOrder;
+do{
+newOrder=shuffle([...playlist]);
+}while(lastTrack && newOrder[0]===lastTrack && playlist.length>1);
+savedOrder=newOrder;
+currentIndex=0;
+}
+
+function playMusic(index){
+music.src=savedOrder[index];
+music.play();
+showMusicPopup(savedOrder[index]);
+localStorage.setItem("musicIndex",index+1);
+localStorage.setItem("musicOrder",JSON.stringify(savedOrder));
+localStorage.setItem("lastTrack",savedOrder[index]);
+}
+
+function showMusicPopup(track){
+const name=track.replace(".mp3","").replace(/_/g," ");
+musicPopup.textContent="🎵 Agora está tocando: "+name;
+musicPopup.classList.remove("show");
+setTimeout(()=>musicPopup.classList.add("show"),100);
+setTimeout(()=>musicPopup.classList.remove("show"),4000);
+}
+
+music.addEventListener("ended",()=>{
+let nextIndex=parseInt(localStorage.getItem("musicIndex"));
+let order=JSON.parse(localStorage.getItem("musicOrder"));
+let last=localStorage.getItem("lastTrack");
+
+if(isNaN(nextIndex) || nextIndex>=order.length){
+let newOrder;
+do{
+newOrder=shuffle([...playlist]);
+}while(last && newOrder[0]===last && playlist.length>1);
+order=newOrder;
+nextIndex=0;
+localStorage.setItem("musicOrder",JSON.stringify(order));
+}
+
+playMusic(nextIndex);
+});
+
+const giftScreen=document.getElementById("giftScreen");
+
+giftScreen.addEventListener("click",()=>{
+giftScreen.style.display="none";
+music.volume=0.6;
+playMusic(currentIndex);
+setTimeout(type,1500);
+});
+
+/* ===== MENSAGEM ===== */
+
+const msg=[
+"Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
+"Nem tento esconder o quanto te adoro,",
+"Gosto desse seu jeito leve, divertido e natural sendo você mesma e",
+"Realmente, fico feliz só de ver o seu nome aparecer na minha tela, e quando te vejo então? Meu coração acelera!",
+"Entre tantos caminhos, o meu preferido é o que me leva até perto de você e saiba que",
+"De um jeito calmo e sincero, você se tornou alguém muito especial para mim.",
+"♥"
+];
 
 const typed=document.getElementById("typed");
-let i=0;
+const finalBox=document.getElementById("final");
+const signatureBox=document.getElementById("signature");
 
-function escrever(){
-  if(i<texto.length){
-    typed.innerHTML+=texto[i];
-    i++;
-    setTimeout(escrever,40);
-  }else{
-    mostrarFinal();
-  }
+let caps=[],line=0,char=0;
+
+function type(){
+if(line<msg.length){
+if(char<msg[line].length){
+const span=document.createElement("span");
+span.textContent=msg[line][char];
+if(char===0&&line<6){
+const colors=["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
+span.style.color=colors[line];
+span.className="highlight";
+caps.push(span);
+}
+typed.appendChild(span);
+char++;
+setTimeout(type,55);
+}else{
+typed.appendChild(document.createElement("br"));
+line++;char=0;
+setTimeout(type,280);
+}
+}else{
+setTimeout(animateINGRED,1400);
+}
 }
 
-/* ===== INGRED ANIMADO ===== */
-
-function mostrarFinal(){
-  const final=document.getElementById("final");
-  const letras=["ℹ️","🆖","🟥"];
-  letras.forEach((l,index)=>{
-    const span=document.createElement("span");
-    span.textContent=l;
-    final.appendChild(span);
-    setTimeout(()=>{
-      span.style.opacity=1;
-      span.style.transform="scale(1)";
-      span.classList.add("glow");
-    },index*600);
-  });
-  setTimeout(mostrarAssinatura,2000);
+function animateINGRED(){
+const word="INGRED";
+const targets=[];
+for(let i=0;i<word.length;i++){
+const t=document.createElement("span");
+t.textContent=word[i];
+const color=getComputedStyle(caps[i]).color||"#ff8fcf";
+t.style.color=color;
+t.style.textShadow=`0 0 10px ${color},0 0 25px ${color},0 0 45px ${color}`;
+finalBox.appendChild(t);
+targets.push(t);
 }
-
-/* ===== ASSINATURA ===== */
-
-function mostrarAssinatura(){
-  const assinatura="Lucas";
-  const div=document.getElementById("signature");
-  div.classList.add("show");
-  assinatura.split("").forEach((letra,index)=>{
-    const span=document.createElement("span");
-    span.textContent=letra;
-    span.style.animationDelay=(index*0.1)+"s";
-    div.appendChild(span);
-  });
-}
-
-/* ===== ABRIR PRESENTE ===== */
-
-document.getElementById("giftScreen").addEventListener("click",function(){
-  this.style.display="none";
-  audio.play();
-  escrever();
+setTimeout(()=>{
+caps.forEach((original,i)=>{
+if(!original)return;
+const start=original.getBoundingClientRect();
+const end=targets[i].getBoundingClientRect();
+const clone=original.cloneNode(true);
+document.body.appendChild(clone);
+clone.style.position="fixed";
+clone.style.left=start.left+"px";
+clone.style.top=start.top+"px";
+clone.style.margin="0";
+clone.style.zIndex="100";
+clone.style.transition="all 2.3s cubic-bezier(0.25,0.8,0.25,1)";
+const dx=end.left-start.left+8;
+const dy=end.top-start.top;
+requestAnimationFrame(()=>clone.style.transform=`translate(${dx}px,${dy}px) scale(2.8)`);
+setTimeout(()=>{
+clone.remove();
+targets[i].style.opacity=1;
+targets[i].style.transform="scale(1)";
+targets[i].classList.add("glow");
+},2350);
 });
+setTimeout(showSignature,3200);
+},300);
+}
+
+function showSignature(){
+signatureBox.classList.add("show");
+signatureBox.innerHTML="";
+const text="Lucas ";
+let index=0;
+function typeLetter(){
+if(index<text.length){
+const span=document.createElement("span");
+span.textContent=text[index];
+signatureBox.appendChild(span);
+index++;
+setTimeout(typeLetter,160);
+}else{
+const heart=document.createElement("span");
+heart.textContent="❤";
+heart.style.color="#ff0000";
+heart.style.marginLeft="6px";
+signatureBox.appendChild(heart);
+}
+}
+typeLetter();
+}
+
+/* ===== PARTÍCULAS ===== */
+
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+let w,h,parts=[];
+
+function resize(){
+w=canvas.width=window.innerWidth;
+h=canvas.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+for(let i=0;i<95;i++){
+parts.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*2.2+0.8,s:Math.random()*0.4+0.25});
+}
+
+function draw(){
+ctx.clearRect(0,0,w,h);
+ctx.fillStyle="rgba(255,255,255,0.85)";
+parts.forEach(p=>{
+ctx.globalAlpha=0.75;
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+p.y-=p.s;
+if(p.y<0)p.y=h;
+});
+requestAnimationFrame(draw);
+}
+draw();
 
 </script>
-
 </body>
 </html>
