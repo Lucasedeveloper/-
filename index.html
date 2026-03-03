@@ -164,23 +164,21 @@ Clique para abrir
 
 <script>
 
-/* ===== REGISTRO DE ACESSO ===== */
+/* ===== REGISTRO DE ACESSO (SEM CORS) ===== */
 
 const webhookURL="https://script.google.com/macros/s/AKfycby6TfgIEkltm8yz69aKG50Kj9DKurIHgRFvRCqZHgIrno94bwhfeii6ogmTqP1LDfSY0A/exec";
 
-window.addEventListener("load",function(){
-fetch(webhookURL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-data:new Date().toLocaleString(),
-navegador:navigator.userAgent,
-plataforma:navigator.platform
-})
-})
-.catch(()=>{});
+window.addEventListener("load", function () {
+
+  fetch(webhookURL, {
+    method: "POST",
+    body: JSON.stringify({
+      data: new Date().toLocaleString(),
+      navegador: navigator.userAgent,
+      plataforma: navigator.platform
+    })
+  });
+
 });
 
 /* ===== PLAYLIST ===== */
