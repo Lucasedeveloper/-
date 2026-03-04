@@ -8,135 +8,200 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:radial-gradient(circle at top,#1a002a,#000 70%);
-  overflow:hidden;
-  font-family:'Segoe UI',sans-serif;
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top, #1a002a, #000 70%);
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
 }
-.gift-screen{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  background:radial-gradient(circle,#2a0040,#000 80%);
-  z-index:9999;
-  cursor:pointer;
-  color:white;
-  font-size:18px;
+
+/* Faixa superior – fica até clicar no presente */
+.welcome-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to bottom, rgba(255, 105, 180, 0.92), rgba(255, 20, 147, 0.75));
+  color: white;
+  text-align: center;
+  padding: 12px 0;
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-shadow: 0 0 12px #fff, 0 0 25px #ff1493;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 1.2s ease-out;
+  box-shadow: 0 4px 20px rgba(255, 20, 147, 0.6);
 }
-.gift{
-  font-size:100px;
-  animation:float 2s infinite ease-in-out;
+
+.welcome-banner.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-15px);}
+
+.welcome-banner small {
+  display: block;
+  font-size: 1.4rem;
+  margin-top: 4px;
+  color: #e0ffff;
+  text-shadow: 0 0 10px #00ffff;
 }
-canvas{ position:fixed; inset:0; z-index:0; }
-.container{ position:relative; width:480px; height:580px; z-index:1; }
-.heart{
-  width:100%;
-  height:100%;
-  animation:pulse 2.5s infinite ease-in-out;
-  filter:drop-shadow(0 0 40px rgba(255,0,120,.6));
+
+.gift-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: radial-gradient(circle, #2a0040, #000 80%);
+  z-index: 9999;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
 }
-@keyframes pulse{
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.05);}
+
+.gift {
+  font-size: 100px;
+  animation: float 2s infinite ease-in-out;
 }
-.content{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:290px;
-  text-align:center;
-  display:flex;
-  flex-direction:column;
-  gap:24px;
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
-.text{ color:#fff; font-size:15px; line-height:1.75; }
-.highlight{
-  font-weight:900;
-  font-size:20px;
-  text-shadow:0 0 12px currentColor,0 0 30px currentColor;
+
+canvas { position: fixed; inset: 0; z-index: 0; }
+
+.container {
+  position: relative;
+  width: 480px;
+  height: 580px;
+  z-index: 1;
 }
-.final{
-  display:flex;
-  justify-content:center;
-  gap:14px;
-  min-height:82px;
-  position:relative;
-  top:-8px;
+
+.heart {
+  width: 100%;
+  height: 100%;
+  animation: pulse 2.5s infinite ease-in-out;
+  filter: drop-shadow(0 0 40px rgba(255,0,120,.6));
 }
-.final span{
-  font-size:58px;
-  font-weight:900;
-  opacity:0;
-  transform:scale(.6);
-  transition:opacity .6s ease, transform .6s ease;
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
-.glow{ animation:glow 1.4s infinite alternate; }
-@keyframes glow{
-  from{filter:brightness(1);}
-  to{filter:brightness(2.4);}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 290px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
-.signature{
-  margin-top:25px;
-  color:#00ffff;
-  font-family:'Dancing Script',cursive;
-  font-size:42px;
-  font-weight:700;
-  letter-spacing:2px;
-  opacity:0;
-  min-height:55px;
-  text-shadow:0 0 15px rgba(255,179,209,.6);
-  transition:opacity .8s ease;
+
+.text { color: #fff; font-size: 15px; line-height: 1.75; }
+
+.highlight {
+  font-weight: 900;
+  font-size: 20px;
+  text-shadow: 0 0 12px currentColor, 0 0 30px currentColor;
 }
-.signature.show{opacity:1;}
-.signature span{
-  display:inline-block;
-  opacity:0;
-  transform:translateY(10px);
-  animation:signaturePop .5s forwards;
+
+.final {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  min-height: 82px;
+  position: relative;
+  top: -8px;
 }
-@keyframes signaturePop{
-  to{opacity:1;transform:translateY(0);}
+
+.final span {
+  font-size: 58px;
+  font-weight: 900;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .6s ease, transform .6s ease;
 }
-.music-popup{
-  position:fixed;
-  top:30px;
-  left:50%;
-  transform:translateX(-50%) translateY(-20px);
-  background:rgba(0,0,0,.75);
-  padding:12px 22px;
-  border-radius:30px;
-  color:#fff;
-  font-size:14px;
-  letter-spacing:1px;
-  opacity:0;
-  z-index:10000;
-  backdrop-filter:blur(6px);
-  transition:all .6s ease;
+
+.glow { animation: glow 1.4s infinite alternate; }
+
+@keyframes glow {
+  from { filter: brightness(1); }
+  to { filter: brightness(2.4); }
 }
-.music-popup.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
+
+.signature {
+  margin-top: 25px;
+  color: #00ffff;
+  font-family: 'Dancing Script', cursive;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0;
+  min-height: 55px;
+  text-shadow: 0 0 15px rgba(255,179,209,.6);
+  transition: opacity .8s ease;
+}
+
+.signature.show { opacity: 1; }
+
+.signature span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: signaturePop .5s forwards;
+}
+
+@keyframes signaturePop {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.music-popup {
+  position: fixed;
+  top: 100px; /* Abaixo da faixa */
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: rgba(0,0,0,.75);
+  padding: 12px 22px;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  opacity: 0;
+  z-index: 10000;
+  backdrop-filter: blur(6px);
+  transition: all .6s ease;
+}
+
+.music-popup.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 </style>
 </head>
 <body>
 
+<!-- Faixa que fica até clicar no presente -->
+<div class="welcome-banner" id="welcomeBanner">
+  Feliz dia da mulher! 🌸
+  <small>Você merece todo o carinho do mundo ❤️</small>
+</div>
+
 <div class="gift-screen" id="giftScreen">
-<div class="gift">🎁</div>
-Clique para abrir
+  <div class="gift">🎁</div>
+  Clique para abrir
 </div>
 
 <canvas id="particles"></canvas>
@@ -144,35 +209,34 @@ Clique para abrir
 <div class="music-popup" id="musicPopup"></div>
 
 <div class="container">
-<svg class="heart" viewBox="0 0 512 512">
-<defs>
-<radialGradient id="g" cx="50%" cy="40%" r="70%">
-<stop offset="0%" stop-color="#ff8fcf"/>
-<stop offset="50%" stop-color="#ff2d75"/>
-<stop offset="100%" stop-color="#b3003c"/>
-</radialGradient>
-</defs>
-<path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="url(#g)"/>
-</svg>
+  <svg class="heart" viewBox="0 0 512 512">
+    <defs>
+      <radialGradient id="g" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="#ff8fcf"/>
+        <stop offset="50%" stop-color="#ff2d75"/>
+        <stop offset="100%" stop-color="#b3003c"/>
+      </radialGradient>
+    </defs>
+    <path d="M256 460 C120 350,40 260,40 170 C40 90,100 50,160 50 C210 50,240 80,256 110 C272 80,302 50,352 50 C412 50,472 90,472 170 C472 260,392 350,256 460Z" fill="url(#g)"/>
+  </svg>
 
-<div class="content">
-<div class="text" id="typed"></div>
-<div class="final" id="final"></div>
-<div class="signature" id="signature"></div>
-</div>
+  <div class="content">
+    <div class="text" id="typed"></div>
+    <div class="final" id="final"></div>
+    <div class="signature" id="signature"></div>
+  </div>
 </div>
 
 <script>
 
 /* ===== REGISTRO DE ACESSO COM MÚSICAS ===== */
-const webhookURL = "https://script.google.com/macros/s/AKfycbxO_M-fNsp0ad4FlJfej9W6unv1Kbby1902FnTs3M04sribkuJDwQVranzzL3hn1OI05Q/exec"; // ← COLOQUE SEU URL ATUAL AQUI
+const webhookURL = "https://script.google.com/macros/s/AKfycbxO_M-fNsp0ad4FlJfej9W6unv1Kbby1902FnTs3M04sribkuJDwQVranzzL3hn1OI05Q/exec";
 
-let musicasTocadas = []; // guarda as músicas tocadas nessa sessão/acesso
+let musicasTocadas = [];
 
 async function registrarAcesso(tipo, musicaAtual = null) {
   let musicaInicial = "";
 
-  // Se for o clique no presente, define a música inicial
   if (tipo === "🎁 Abriu o presente" && typeof currentIndex !== 'undefined' && savedOrder) {
     const primeira = savedOrder[currentIndex];
     if (primeira) {
@@ -180,7 +244,6 @@ async function registrarAcesso(tipo, musicaAtual = null) {
     }
   }
 
-  // Adiciona música atual se fornecida (chamado no playMusic)
   if (musicaAtual) {
     const nome = musicaAtual.replace(".mp3", "").replace(/_/g, " ");
     if (!musicasTocadas.includes(nome)) {
@@ -203,7 +266,7 @@ async function registrarAcesso(tipo, musicaAtual = null) {
   try {
     await fetch(webhookURL, {
       method: "POST",
-      mode: "no-cors", // importante para evitar problemas de CORS
+      mode: "no-cors",
       body: JSON.stringify(dados)
     });
   } catch(e) {
@@ -211,13 +274,7 @@ async function registrarAcesso(tipo, musicaAtual = null) {
   }
 }
 
-// Quando a página carrega
-window.addEventListener("load", () => {
-  registrarAcesso("Acesso à página");
-});
-
 /* ===== PLAYLIST ===== */
-
 const playlist = [
   "Die_with_a_smile.mp3",
   "Meu_abrigo.mp3",
@@ -260,8 +317,6 @@ function playMusic(index) {
   music.play().catch(e => console.log("Erro ao tocar:", e));
 
   showMusicPopup(track);
-
-  // Registra que essa música começou a tocar
   registrarAcesso("Música começou a tocar", track);
 
   localStorage.setItem("musicIndex", index + 1);
@@ -297,16 +352,28 @@ music.addEventListener("ended", () => {
 
 const giftScreen = document.getElementById("giftScreen");
 
+/* ===== Clique no presente: esconde a faixa e o gift screen ===== */
 giftScreen.addEventListener("click", () => {
   registrarAcesso("🎁 Abriu o presente");
+
+  // Esconde a faixa superior com fade
+  const banner = document.getElementById("welcomeBanner");
+  banner.classList.add("hidden");
+
+  // Esconde o gift screen
   giftScreen.style.display = "none";
+
   music.volume = 0.6;
   playMusic(currentIndex);
   setTimeout(type, 1500);
 }, { once: true });
 
-/* ===== MENSAGEM ===== */
+/* ===== Quando a página carrega (faixa já aparece automaticamente) ===== */
+window.addEventListener("load", () => {
+  registrarAcesso("Acesso à página");
+});
 
+/* ===== MENSAGEM ===== */
 const msg = [
   "Imagina se você soubesse o quanto eu penso em você nos momentos mais aleatórios do meu dia, já",
   "Nem tento esconder o quanto te adoro,",
@@ -375,8 +442,8 @@ function animateINGRED() {
       const dx = end.left - start.left + 8;
       const dy = end.top - start.top;
       requestAnimationFrame(() => {
-  clone.style.transform = `translate(${dx}px, ${dy}px) scale(2.8)`;
-});
+        clone.style.transform = `translate(${dx}px, ${dy}px) scale(2.8)`;
+      });
       setTimeout(() => {
         clone.remove();
         targets[i].style.opacity = 1;
@@ -412,7 +479,6 @@ function showSignature() {
 }
 
 /* ===== PARTÍCULAS ===== */
-
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let w, h, parts = [];
