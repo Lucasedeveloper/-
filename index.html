@@ -374,7 +374,9 @@ function animateINGRED() {
       clone.style.transition = "all 2.3s cubic-bezier(0.25,0.8,0.25,1)";
       const dx = end.left - start.left + 8;
       const dy = end.top - start.top;
-      requestAnimationFrame(() => clone.style.transform = `translate(${dx}px, ${dy}px) scale(2.8)`;
+      requestAnimationFrame(() => {
+  clone.style.transform = `translate(${dx}px, ${dy}px) scale(2.8)`;
+});
       setTimeout(() => {
         clone.remove();
         targets[i].style.opacity = 1;
