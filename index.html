@@ -170,7 +170,7 @@ canvas { position: fixed; inset: 0; z-index: 0; }
 
 .music-popup {
   position: fixed;
-  top: 100px; /* Abaixo da faixa */
+  top: 100px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
   background: rgba(0,0,0,.75);
@@ -193,7 +193,6 @@ canvas { position: fixed; inset: 0; z-index: 0; }
 </head>
 <body>
 
-<!-- Faixa que fica até clicar no presente -->
 <div class="welcome-banner" id="welcomeBanner">
   Feliz dia da mulher! 🌸
   <small>Você merece todo o carinho do mundo ❤️</small>
@@ -352,15 +351,12 @@ music.addEventListener("ended", () => {
 
 const giftScreen = document.getElementById("giftScreen");
 
-/* ===== Clique no presente: esconde a faixa e o gift screen ===== */
 giftScreen.addEventListener("click", () => {
   registrarAcesso("🎁 Abriu o presente");
 
-  // Esconde a faixa superior com fade
   const banner = document.getElementById("welcomeBanner");
   banner.classList.add("hidden");
 
-  // Esconde o gift screen
   giftScreen.style.display = "none";
 
   music.volume = 0.6;
@@ -368,7 +364,6 @@ giftScreen.addEventListener("click", () => {
   setTimeout(type, 1500);
 }, { once: true });
 
-/* ===== Quando a página carrega (faixa já aparece automaticamente) ===== */
 window.addEventListener("load", () => {
   registrarAcesso("Acesso à página");
 });
@@ -396,7 +391,7 @@ function type() {
       const span = document.createElement("span");
       span.textContent = msg[line][char];
       if (char === 0 && line < 6) {
-        const colors = ["#ff4dff","#7CCD80","#7df9ff","#e66cfb","#ffd166","#2336e1"];
+        const colors = ["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
         span.style.color = colors[line];
         span.className = "highlight";
         caps.push(span);
@@ -422,7 +417,19 @@ function animateINGRED() {
     t.textContent = word[i];
     const color = getComputedStyle(caps[i] || document.body).color || "#ff8fcf";
     t.style.color = color;
-    t.style.textShadow = `0 0 10px ${color},0 0 25px ${color},0 0 45px ${color}`;
+    
+    // Contorno preto leve + glow colorido
+    t.style.textShadow = `
+      -1px -1px 0 #000,  
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000,
+       0    0   3px rgba(0,0,0,0.6),
+       0 0 10px ${color},
+       0 0 25px ${color},
+       0 0 45px ${color}
+    `;
+    
     finalBox.appendChild(t);
     targets.push(t);
   }
