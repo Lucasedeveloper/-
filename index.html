@@ -115,7 +115,21 @@ canvas { position: fixed; inset: 0; z-index: 0; }
 .highlight {
   font-weight: 900;
   font-size: 20px;
-  text-shadow: 0 0 12px currentColor, 0 0 30px currentColor;
+  text-shadow: 
+    -1px -1px 0 #000,  
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0    0   3px rgba(0,0,0,0.6); /* contorno preto leve + blur sutil */
+}
+.highlight.glow {
+  animation: glow 1.4s infinite alternate;
+}
+
+/* Mantém o glow colorido por cima do contorno preto */
+@keyframes glow {
+  from { filter: brightness(1); }
+  to { filter: brightness(2.4); }
 }
 
 .final {
@@ -133,13 +147,6 @@ canvas { position: fixed; inset: 0; z-index: 0; }
   opacity: 0;
   transform: scale(.6);
   transition: opacity .6s ease, transform .6s ease;
-}
-
-.glow { animation: glow 1.4s infinite alternate; }
-
-@keyframes glow {
-  from { filter: brightness(1); }
-  to { filter: brightness(2.4); }
 }
 
 .signature {
@@ -417,19 +424,7 @@ function animateINGRED() {
     t.textContent = word[i];
     const color = getComputedStyle(caps[i] || document.body).color || "#ff8fcf";
     t.style.color = color;
-    
-    // Contorno preto leve + glow colorido
-    t.style.textShadow = `
-      -1px -1px 0 #000,  
-       1px -1px 0 #000,
-      -1px  1px 0 #000,
-       1px  1px 0 #000,
-       0    0   3px rgba(0,0,0,0.6),
-       0 0 10px ${color},
-       0 0 25px ${color},
-       0 0 45px ${color}
-    `;
-    
+    t.style.textShadow = `0 0 10px ${color},0 0 25px ${color},0 0 45px ${color}`;
     finalBox.appendChild(t);
     targets.push(t);
   }
