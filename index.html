@@ -396,7 +396,7 @@ function type() {
       const span = document.createElement("span");
       span.textContent = msg[line][char];
       if (char === 0 && line < 6) {
-        const colors = ["#ff4dff","#c084fc","#7df9ff","#e66cfb","#ffd166","#2336e1"];
+        const colors = ["#ff4dff","#7CCD80","#7df9ff","#e66cfb","#ffd166","#2336e1"];
         span.style.color = colors[line];
         span.className = "highlight";
         caps.push(span);
